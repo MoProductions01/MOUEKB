@@ -1,6 +1,13 @@
 # Visual Studio 2015 user specific files
 .vs/
 
+# From the .ignore file created by Unreal
+/.vscode
+#/Content
+#/Docs
+/Intermediate
+/Saved
+
 # Compiled Object files
 *.slo
 *.lo
