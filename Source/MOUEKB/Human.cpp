@@ -12,8 +12,20 @@
 // Called every frame
 void AHuman::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime);
+	Super::Tick(DeltaTime);	
 
+	// This is the tweak to make sure that the collision physics will work even if the actor isn't moving (normally
+	// physics is ignored if the actor is still.)
+	FHitResult Hit;
+	FVector MoveAdj = FVector(1.f, 0.f, 0.f);	
+	// bool UMovementComponent::SafeMoveUpdatedComponent(const FVector& Delta, const FRotator& NewRotation, bool bSweep, FHitResult& OutHit, ETeleportType Teleport)
+	GetCharacterMovement()->SafeMoveUpdatedComponent(MoveAdj, GetActorRotation(), true, Hit);
+	GetCharacterMovement()->SafeMoveUpdatedComponent(-MoveAdj, GetActorRotation(), true, Hit);
+	
+	// NOTE: this below doesn't work but i'm just leaving it in for reference
+	//UMovementComponent::MoveUpdatedComponent(const FVector& Delta, const FRotator& NewRotation, bool bSweep, FHitResult* OutHit, ETeleportType Teleport)
+	//GetCharacterMovement()->MoveUpdatedComponent(MoveAdj, GetActorRotation(), true, &Hit);	
+	//GetCharacterMovement()->MoveUpdatedComponent(-MoveAdj, GetActorRotation(), true, &Hit);			
 }
 
 // Sets default values
@@ -65,7 +77,6 @@ void AHuman::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AHuman::Look);	
 		//EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ABird::Look);	
 	}
-
 }
 
 // NOTE: Make sure to set up the "Orient Rotation To Movement" toggle under "Character Movement (Rotation Settings)"

@@ -8,6 +8,9 @@
 /Intermediate
 /Saved
 
+# My Stuff
+/Builds
+
 # Compiled Object files
 *.slo
 *.lo
