@@ -87,7 +87,7 @@ void AHuman::Move2D(const FInputActionValue& Value)
 	
 
 	const FVector2D MovementVector = Value.Get<FVector2D>();
-	//UE_LOG(LogTemp, Display, TEXT("-------Move2D: %f, %f"), MovementVector.X, MovementVector.Y);
+	UE_LOG(LogTemp, Display, TEXT("-------Move2D: %f, %f"), MovementVector.X, MovementVector.Y);
 
 	const FRotator ControlRotation = GetControlRotation(); // rotation of the controller
 	// only care about Yaw since we're moving parallel to the ground
