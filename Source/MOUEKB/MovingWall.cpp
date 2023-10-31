@@ -29,10 +29,19 @@ void UMovingWall::TickComponent(float DeltaTime, ELevelTick TickType, FActorComp
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FVector CurrentLocation = GetOwner()->GetActorLocation();
-	FVector TargetLocation = OriginalLocation + MoveOffset;
-	float Speed = FVector::Distance(OriginalLocation, TargetLocation) / MoveTime;
-	FVector NewLocation = FMath::VInterpConstantTo(CurrentLocation, TargetLocation, DeltaTime, Speed);	
-	GetOwner()->SetActorLocation(NewLocation);
+	if(ShouldMove)
+	{
+		FVector CurrentLocation = GetOwner()->GetActorLocation();
+		FVector TargetLocation = OriginalLocation + MoveOffset;
+		float Speed = FVector::Distance(OriginalLocation, TargetLocation) / MoveTime;
+		FVector NewLocation = FMath::VInterpConstantTo(CurrentLocation, TargetLocation, DeltaTime, Speed);	
+		GetOwner()->SetActorLocation(NewLocation);
+	}
+	
+}
+
+void UMovingWall::SetShouldMove(bool NewShouldMove)
+{
+	ShouldMove = NewShouldMove;
 }
 
