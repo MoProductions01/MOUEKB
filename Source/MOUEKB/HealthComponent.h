@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
+class AToonTanksGameMode;
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class MOUEKB_API UHealthComponent : public UActorComponent
@@ -29,6 +31,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MaxHealth = 100.f;
 	float Health = 0.f;		
+
+	AToonTanksGameMode* ToonTanksGameMode;
 
 	// this will be bound to the OnTakeAnyDamage delegate. Make sure parameters are right since we're binding it.
 	// Instigator is the controller responsible for the damage (ie player controlling a pawn). DamageCauser would be the projectile itself

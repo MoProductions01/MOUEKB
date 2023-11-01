@@ -22,7 +22,7 @@ void ATank::BeginPlay()
 	Super::BeginPlay();
 
     TankPlayerController = Cast<APlayerController>(GetController());
-
+    //TankPlayerController->bShowMouseCursor = true;
 	//if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
     if(TankPlayerController)
 	{
@@ -83,8 +83,8 @@ void ATank::Tick(float DeltaTime)
         TankPlayerController->GetHitResultUnderCursor(
             ECollisionChannel::ECC_Visibility, false, HitResult);
 
-        DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12,
-                    FColor::Red, false, -1.f);
+       // DrawDebugSphere(GetWorld(), HitResult.ImpactPoint, 25.f, 12,
+         //           FColor::Red, false, -1.f);
 
         RotateTurret(HitResult.ImpactPoint);                
     }
@@ -94,4 +94,13 @@ void ATank::Fire()
 {
     Super::Fire();
 	//UE_LOG(LogTemp, Display, TEXT("----------------------ATank::Fire!"));
+}
+
+void ATank::HandleDestruction()
+{      
+    Super::HandleDestruction();    
+    UE_LOG(LogTemp, Display, TEXT("-------ATank::HandleDestruction()"));
+    bAlive = false;
+    SetActorHiddenInGame(true);
+    SetActorTickEnabled(false);  
 }

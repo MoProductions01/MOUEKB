@@ -1,0 +1,41 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/GameModeBase.h"
+#include "ToonTanksGameMode.generated.h"
+
+class ATank;
+class AToonTanksPlayerController;
+
+/**
+ * 
+ */
+UCLASS()
+class MOUEKB_API AToonTanksGameMode : public AGameModeBase
+{
+	GENERATED_BODY()
+
+public:
+	void ActorDied(AActor* DeadActor);
+
+protected:
+	virtual void BeginPlay() override;	
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void StartGameWidgetStart();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void GameOverWidgetStart(bool bWonGame);
+	
+private:
+	ATank* Tank;		
+	AToonTanksPlayerController* ToonTanksPlayerController;
+
+	float StartDelay = 3.f;
+	void HandleGameStart();
+
+	int32 TargetTowers = 0;
+	int32 GetTargetTowerCount();
+};

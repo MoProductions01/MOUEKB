@@ -24,11 +24,11 @@ void ATower::CheckFireCondition()
     if(Distance <= FireRange && Tank->bAlive)
     {
         
-       // Fire();
+        Fire();
     }
     else
     {
-        UE_LOG(LogTemp, Display, TEXT("Tank not in range."));
+        //UE_LOG(LogTemp, Display, TEXT("Tank not in range."));
     }
 }
 
@@ -46,4 +46,12 @@ void ATower::Tick(float DeltaTime)
             RotateTurret(Tank->GetActorLocation());
         }
     }        
+}
+
+void ATower::HandleDestruction()
+{   
+    Super::HandleDestruction();    
+    UE_LOG(LogTemp, Display, TEXT("-------ATower::HandleDestruction()")); 
+    Destroy();
+    
 }

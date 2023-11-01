@@ -6,6 +6,10 @@
 #include "GameFramework/Pawn.h"
 #include "BasePawn.generated.h"
 
+class UCapsuleComponent;
+class UParticleSystem;
+class USoundBase;
+
 UCLASS()
 class MOUEKB_API ABasePawn : public APawn
 {
@@ -17,6 +21,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;	
 
+	virtual void HandleDestruction();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -26,7 +32,7 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
-	class UCapsuleComponent* CapsuleComp;
+	UCapsuleComponent* CapsuleComp;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* BaseMesh;
@@ -39,6 +45,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Combat")
 	TSubclassOf<class AProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	UParticleSystem* DeathParticles;
+
+	UPROPERTY(EditAnywhere, Category = "Combat")
+	USoundBase* DeathSound;
 
 	/*UPROPERTY(VisibleInstanceOnly)
 	int32 VisibleInstanceOnlyInt = 11;	
