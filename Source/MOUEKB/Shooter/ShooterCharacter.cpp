@@ -2,9 +2,6 @@
 
 
 #include "ShooterCharacter.h"
-#include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
-#include "Gun.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -14,29 +11,24 @@ AShooterCharacter::AShooterCharacter()
 
 }
 
-// Called every frame
-void AShooterCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 // Called when the game starts or when spawned
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-//
+
+	Health = MaxHealth;
 	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
 	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
 	Gun->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, TEXT("WeaponSocket_MO"));
 	Gun->SetOwner(this);
-	
+
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(ShooterMappingContext, 0);
 		}
-	}
+	}	
 }
 
 // Called to bind functionality to input
@@ -61,16 +53,17 @@ void AShooterCharacter::Shoot()
 
 void AShooterCharacter::Move2D(const FInputActionValue& Value)
 {
-	const FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();	
+
 	//UE_LOG(LogTemp, Display, TEXT("-------Move2D(): %f, %f"), MovementVector.X, MovementVector.Y);
 
 	const FRotator ControlRotation = GetControlRotation(); // rotation of the controller
 	// only care about Yaw since we're moving parallel to the ground
 	const FRotator YawRotation(0.f, ControlRotation.Yaw, 0.f);
-	// now we need the directoin.  Tihs is where the rotation matricies come in
+	// now we need the X direction.  Tihs is where the rotation matricies come in
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X); // X = forward vector
 	AddMovementInput(ForwardDirection, MovementVector.Y);	
-
+	// Same thing but for left/right
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);  // Y = right vector
 	AddMovementInput(RightDirection, MovementVector.X);	
 }
@@ -78,8 +71,9 @@ void AShooterCharacter::Move2D(const FInputActionValue& Value)
 // NOTE: By default this won't work, so on the Spring Arm select "Use Pawn Control Rotation"
 void AShooterCharacter::Look(const FInputActionValue& Value)
 {
+	// NOTE: Make sure on the character BP you have "use controller rotation yaw" selected
 	const FVector2D LookAxisVector = Value.Get<FVector2D>();
-	UE_LOG(LogTemp, Display, TEXT("-------Look(): %f, %f"), LookAxisVector.X, LookAxisVector.Y);
+	//UE_LOG(LogTemp, Display, TEXT("-------Look(): %f, %f"), LookAxisVector.X, LookAxisVector.Y);
 
 	AddControllerPitchInput(LookAxisVector.Y);
 	AddControllerYawInput(LookAxisVector.X);
@@ -91,29 +85,28 @@ void AShooterCharacter::Jump()
 	ACharacter::Jump();
 }
 
-// --------------------- BELOW IS ALL BASIC STUFF FROM SECTION 06 SHOOTER ----------------------------------------
-/*void AShooterCharacter_MO::MoveForward(float AxisValue)
+float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, class AActor* DamageCauser)
 {
-	AddMovementInput(GetActorForwardVector() * AxisValue);
-}
-void AShooterCharacter_MO::MoveRight(float AxisValue)
-{
-	AddMovementInput(GetActorRightVector() * AxisValue);
-}
-void AShooterCharacter_MO::LookUp(float AxisValue)
-{	
-	AddControllerPitchInput(AxisValue);
-}
-void AShooterCharacter_MO::LookRight(float AxisValue)
-{	
-	AddControllerYawInput(AxisValue);
+	float DamageToApply = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	DamageToApply = FMath::Min(Health, DamageToApply);
+	Health -= DamageToApply;
+	UE_LOG(LogTemp, Display, TEXT("------------------------Health left: %f"), Health);
+	//UE_LOG(LogTemp, Display, TEXT("--------------AShooterCharacter::TakeDamage() DamageAmount: %f"), DamageAmount);
+	return 0;
 }
 
-void AShooterCharacter_MO::LookUpRate(float AxisValue)
-{		
-	AddControllerPitchInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
+bool AShooterCharacter::IsDead() const
+{
+	bool IsDead = Health <= 0;
+	//UE_LOG(LogTemp, Display, TEXT("---------------AShooterCharacter::IsDead(): %d"), IsDead);
+	return Health <= 0;
 }
-void AShooterCharacter_MO::LookRightRate(float AxisValue)
-{		
-	AddControllerYawInput(AxisValue * RotationRate * GetWorld()->GetDeltaSeconds());
-}*/
+
+// Called every frame
+void AShooterCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+
